@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaMinuteReferendum", "LaMinuteReferendum\LaMinuteReferendum.csproj", "{3F50CEEC-5923-484D-88FD-108B9CAA7C57}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFolder", "SolutionFolder", "{2A83ECBE-0118-4BF2-910E-2A758536CE5E}"
+	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
+		.editorconfig = .editorconfig
+		..\.github\workflows\la-minute-referendum.yml = ..\.github\workflows\la-minute-referendum.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6E99FF8B-815C-408A-A8D3-E335E1AA3A6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E99FF8B-815C-408A-A8D3-E335E1AA3A6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E99FF8B-815C-408A-A8D3-E335E1AA3A6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E99FF8B-815C-408A-A8D3-E335E1AA3A6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F50CEEC-5923-484D-88FD-108B9CAA7C57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F50CEEC-5923-484D-88FD-108B9CAA7C57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F50CEEC-5923-484D-88FD-108B9CAA7C57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F50CEEC-5923-484D-88FD-108B9CAA7C57}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
