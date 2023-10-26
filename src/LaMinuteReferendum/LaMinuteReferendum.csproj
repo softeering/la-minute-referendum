@@ -8,7 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Azure.Data.Tables" Version="12.8.1" />
+      <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.35.4" />
+      <PackageReference Include="SoftEEring.Core" Version="2.4.2" />
     </ItemGroup>
 
 </Project>

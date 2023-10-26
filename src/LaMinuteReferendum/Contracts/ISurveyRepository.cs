@@ -1,8 +1,9 @@
-using MonReferendum.Models;
+using LaMinuteReferendum.Models;
 
-namespace MonReferendum.contracts;
+namespace LaMinuteReferendum.contracts;
 
 public interface ISurveyRepository
 {
+	Task InitializeAsync(CancellationToken cancellationToken = default);
     Task<Survey> GetTodaysSurveyAsync(CancellationToken cancellationToken = default);
 }
