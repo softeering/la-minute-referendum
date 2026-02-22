@@ -2,7 +2,6 @@ namespace LaMinuteReferendum.Core.Models;
 
 public class AppConfiguration
 {
-	public string DatabaseName { get; set; }
-	public string SurveyContainerName { get; init; }
-	public string SurveyAnswerContainerName { get; init; }
+	public string SurveyTableName { get; set; } = "surveys";
+	public string SurveyAnswerTableName { get; set; } = "surveyanswers";
 }

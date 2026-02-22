@@ -8,7 +8,6 @@ namespace LaMinuteReferendum.Core.Services;
 public class CachedSurveyRepository(ILogger<CachedSurveyRepository> logger, IMemoryCache memoryCache, ISurveyRepository coreRepository) : ISurveyRepository
 {
 	private readonly ILogger<CachedSurveyRepository> _logger = logger;
-	private readonly IMemoryCache _memoryCache = memoryCache;
 
 	public Task InitializeAsync(CancellationToken cancellationToken = default)
 	{
@@ -19,7 +18,7 @@ public class CachedSurveyRepository(ILogger<CachedSurveyRepository> logger, IMem
 	{
 		var today = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, Survey.CET).Date;
 
-		var result = await this._memoryCache.GetOrCreateAsync<Survey>(
+		var result = await memoryCache.GetOrCreateAsync<Survey>(
 			$"TodaySurvey-{today.ToString("yyyy-MM-dd")}",
 			_ => coreRepository.GetTodaysSurveyAsync(cancellationToken));
 

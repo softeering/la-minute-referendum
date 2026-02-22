@@ -14,6 +14,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaMinuteReferendum", "LaMin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaMinuteReferendum.Tests", "LaMinuteReferendum.Tests\LaMinuteReferendum.Tests.csproj", "{8F33A429-77F3-4878-89A5-AC1D9867F44B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaMinuteReferendum.AppHost", "LaMinuteReferendum.AppHost\LaMinuteReferendum.AppHost.csproj", "{72EB1867-079E-479F-A7DF-12F29EBA2344}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaMinuteReferendum.ServiceDefaults", "LaMinuteReferendum.ServiceDefaults\LaMinuteReferendum.ServiceDefaults.csproj", "{C7899E96-3AE2-46EC-ADA6-5AC4119BE087}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,13 @@ Global
 		{8F33A429-77F3-4878-89A5-AC1D9867F44B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F33A429-77F3-4878-89A5-AC1D9867F44B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F33A429-77F3-4878-89A5-AC1D9867F44B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72EB1867-079E-479F-A7DF-12F29EBA2344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72EB1867-079E-479F-A7DF-12F29EBA2344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72EB1867-079E-479F-A7DF-12F29EBA2344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72EB1867-079E-479F-A7DF-12F29EBA2344}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7899E96-3AE2-46EC-ADA6-5AC4119BE087}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7899E96-3AE2-46EC-ADA6-5AC4119BE087}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7899E96-3AE2-46EC-ADA6-5AC4119BE087}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7899E96-3AE2-46EC-ADA6-5AC4119BE087}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

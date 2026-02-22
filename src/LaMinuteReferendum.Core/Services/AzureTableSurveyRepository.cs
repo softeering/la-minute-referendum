@@ -1,50 +1,66 @@
-using System.Net;
+using Azure.Data.Tables;
 using LaMinuteReferendum.Core.Contracts;
-using LaMinuteReferendum.Core.Extensions;
 using LaMinuteReferendum.Core.Models;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 
 namespace LaMinuteReferendum.Core.Services;
 
-public class AzureTableSurveyRepository(ILogger<AzureTableSurveyRepository> logger, CosmosClient client, IOptions<AppConfiguration> configuration) : ISurveyRepository
+public class AzureTableSurveyRepository(ILogger<AzureTableSurveyRepository> logger, TableClient surveyTableClient, TableClient surveyAnswerTableClient) : ISurveyRepository
 {
-	private readonly AppConfiguration _configuration = configuration.Value;
-	private Container? _surveyContainer;
-	private Container? _surveyAnswerContainer;
+	private readonly TableClient _surveyTableClient = surveyTableClient;
+	private readonly TableClient _surveyAnswerTableClient = surveyAnswerTableClient;
 
 	public async Task InitializeAsync(CancellationToken cancellationToken = default)
 	{
-		var databaseResponse = await client.CreateDatabaseIfNotExistsAsync(this._configuration.DatabaseName, cancellationToken: cancellationToken);
+		// Azure Table Storage tables are created automatically when accessed
+		// This method ensures the tables exist before use
+		try
+		{
+			await _surveyTableClient.CreateAsync(cancellationToken: cancellationToken);
+		}
+		catch (Azure.RequestFailedException ex) when (ex.Status == 409)
+		{
+			// Table already exists
+			logger.LogInformation("Survey table already exists");
+		}
 
-		var surveyContainerResponse = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
-			id: this._configuration.SurveyContainerName,
-			partitionKeyPath: "/day",
-			cancellationToken: cancellationToken
-		);
-
-		this._surveyContainer = surveyContainerResponse.Container;
-
-		var surveyAnswerContainerResponse = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
-			id: this._configuration.SurveyAnswerContainerName,
-			partitionKeyPath: "/day",
-			cancellationToken: cancellationToken
-		);
-
-		this._surveyAnswerContainer = surveyAnswerContainerResponse.Container;
+		try
+		{
+			await _surveyAnswerTableClient.CreateAsync(cancellationToken: cancellationToken);
+		}
+		catch (Azure.RequestFailedException ex) when (ex.Status == 409)
+		{
+			// Table already exists
+			logger.LogInformation("SurveyAnswer table already exists");
+		}
 	}
 
 	public async Task HandleSurveyAnswer(string surveyId, string answerId, (string, string) metadata, CancellationToken cancellationToken = default)
 	{
+		// TODO: Implement survey answer handling for table storage
 	}
 
 	public async Task<Survey> GetTodaysSurveyAsync(CancellationToken cancellationToken = default)
 	{
 		var today = DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, Survey.CET).Date);
+		var partitionKey = today.ToString("yyyy-MM-dd");
 
-		var todaySurvey = await this._surveyContainer.FindOneAsync<Survey>(s => s.Day == today && s.Deprecated == false);
+		try
+		{
+			var entity = await _surveyTableClient.GetEntityAsync<SurveyTableEntity>(partitionKey, partitionKey, cancellationToken: cancellationToken);
 
-		return todaySurvey ?? await this.CreateTodayDefaultSurvey(today, cancellationToken);
+			if (entity.Value.Deprecated)
+			{
+				return await CreateTodayDefaultSurvey(today, cancellationToken);
+			}
+
+			return entity.Value.ToSurvey();
+		}
+		catch (Azure.RequestFailedException ex) when (ex.Status == 404)
+		{
+			// Survey not found, create default
+			return await CreateTodayDefaultSurvey(today, cancellationToken);
+		}
 	}
 
 	private async Task<Survey> CreateTodayDefaultSurvey(DateOnly today, CancellationToken cancellationToken = default)
@@ -61,10 +77,9 @@ public class AzureTableSurveyRepository(ILogger<AzureTableSurveyRepository> logg
 			}
 		);
 
-		var response = await this._surveyContainer.CreateItemAsync(survey, cancellationToken: cancellationToken);
-		if (response.StatusCode != HttpStatusCode.OK)
-			throw new Exception($"Failed to insert default survey for date={today}). Status:" + response.StatusCode);
+		var surveyTableEntity = SurveyTableEntity.FromSurvey(survey);
+		await _surveyTableClient.AddEntityAsync(surveyTableEntity, cancellationToken: cancellationToken);
 
-		return response.Resource;
+		return survey;
 	}
 }
