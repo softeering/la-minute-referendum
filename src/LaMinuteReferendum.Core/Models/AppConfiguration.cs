@@ -1,4 +1,4 @@
-namespace LaMinuteReferendum.Models;
+namespace LaMinuteReferendum.Core.Models;
 
 public class AppConfiguration
 {

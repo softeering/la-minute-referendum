@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 
-namespace MonReferendum.Extensions;
+namespace LaMinuteReferendum.Core.Extensions;
 
 public static class CosmosDBExtensions
 {

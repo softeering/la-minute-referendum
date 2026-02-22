@@ -1,6 +1,6 @@
-using LaMinuteReferendum.Models;
+using LaMinuteReferendum.Core.Models;
 
-namespace LaMinuteReferendum.contracts;
+namespace LaMinuteReferendum.Core.Contracts;
 
 public interface ISurveyRepository
 {

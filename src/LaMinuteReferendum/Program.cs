@@ -1,15 +1,14 @@
+using System.Text.Json;
+using LaMinuteReferendum.Core.Contracts;
+using LaMinuteReferendum.Core.Models;
+using LaMinuteReferendum.Core.Services;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using LaMinuteReferendum.contracts;
-using LaMinuteReferendum.Models;
-using LaMinuteReferendum.Services;
 
 bool useCachedRepository = true;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// map configs and options
 builder.Services.AddOptions();
 var appConfigurationSection = builder.Configuration.GetSection("AppConfiguration");
 builder.Services.Configure<AppConfiguration>(appConfigurationSection);
@@ -24,7 +23,10 @@ builder.Services.AddMemoryCache(options =>
 
 builder.Services.AddSingleton<CosmosClient>(_ => new CosmosClient(builder.Configuration.GetConnectionString("CosmosDB"), new CosmosClientOptions()
 {
-	SerializerOptions = new CosmosSerializationOptions() { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase }
+	UseSystemTextJsonSerializerWithOptions = new JsonSerializerOptions()
+	{
+		PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+	}
 }));
 
 if (useCachedRepository)
@@ -32,8 +34,8 @@ if (useCachedRepository)
 	builder.Services.AddSingleton<ISurveyRepository, CachedSurveyRepository>(provider =>
 	{
 		var logger = provider.GetRequiredService<ILogger<CachedSurveyRepository>>();
-		var coreRepoLogger = provider.GetRequiredService<ILogger<CosmosDBSurveyRepository>>();
-		var coreRepository = new CosmosDBSurveyRepository(
+		var coreRepoLogger = provider.GetRequiredService<ILogger<CosmosDbSurveyRepository>>();
+		var coreRepository = new CosmosDbSurveyRepository(
 			coreRepoLogger,
 			provider.GetRequiredService<CosmosClient>(),
 			provider.GetRequiredService<IOptions<AppConfiguration>>()
@@ -48,7 +50,7 @@ if (useCachedRepository)
 }
 else
 {
-	builder.Services.AddSingleton<ISurveyRepository, CosmosDBSurveyRepository>();
+	builder.Services.AddSingleton<ISurveyRepository, CosmosDbSurveyRepository>();
 }
 
 builder.Services.AddRazorPages();
@@ -59,19 +61,18 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Error");
-	// The default HSTS value is 5 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
-
-app.MapRazorPages();
+// app.MapStaticAssets();
+app.MapRazorPages()
+	.WithStaticAssets();
 
 await app.Services.GetRequiredService<ISurveyRepository>().InitializeAsync();
 
-app.Run();
+await app.RunAsync();

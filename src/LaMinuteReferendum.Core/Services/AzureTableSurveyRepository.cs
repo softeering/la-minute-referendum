@@ -1,34 +1,21 @@
 using System.Net;
-using Microsoft.Azure.Cosmos;
+using LaMinuteReferendum.Core.Contracts;
+using LaMinuteReferendum.Core.Extensions;
+using LaMinuteReferendum.Core.Models;
 using Microsoft.Extensions.Options;
-using LaMinuteReferendum.contracts;
-using LaMinuteReferendum.Models;
-using Microsoft.Azure.Cosmos.Linq;
-using MonReferendum.Extensions;
+using Microsoft.Extensions.Logging;
 
-namespace LaMinuteReferendum.Services;
+namespace LaMinuteReferendum.Core.Services;
 
-public class CosmosDBSurveyRepository : ISurveyRepository
+public class AzureTableSurveyRepository(ILogger<AzureTableSurveyRepository> logger, CosmosClient client, IOptions<AppConfiguration> configuration) : ISurveyRepository
 {
-	private readonly ILogger _logger;
-	private readonly CosmosClient _client;
-	private readonly AppConfiguration _configuration;
-	private Container _surveyContainer;
-	private Container _surveyAnswerContainer;
-
-	public CosmosDBSurveyRepository(
-		ILogger<CosmosDBSurveyRepository> logger,
-		CosmosClient client,
-		IOptions<AppConfiguration> configuration)
-	{
-		this._logger = logger;
-		this._configuration = configuration.Value;
-		this._client = client;
-	}
+	private readonly AppConfiguration _configuration = configuration.Value;
+	private Container? _surveyContainer;
+	private Container? _surveyAnswerContainer;
 
 	public async Task InitializeAsync(CancellationToken cancellationToken = default)
 	{
-		var databaseResponse = await this._client.CreateDatabaseIfNotExistsAsync(this._configuration.DatabaseName, cancellationToken: cancellationToken);
+		var databaseResponse = await client.CreateDatabaseIfNotExistsAsync(this._configuration.DatabaseName, cancellationToken: cancellationToken);
 
 		var surveyContainerResponse = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
 			id: this._configuration.SurveyContainerName,

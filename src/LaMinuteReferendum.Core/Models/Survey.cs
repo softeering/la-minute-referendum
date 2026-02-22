@@ -1,6 +1,6 @@
 using SoftEEring.Core.Helpers;
 
-namespace LaMinuteReferendum.Models;
+namespace LaMinuteReferendum.Core.Models;
 
 public record Survey(string Id, DateOnly Day, string Language, string Question, List<Answer> Answers, bool Deprecated = false)
 {
